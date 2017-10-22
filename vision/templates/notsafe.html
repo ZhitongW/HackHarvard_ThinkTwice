@@ -1,0 +1,19 @@
+
+<!-- <!DOCTYPE html>
+<html>
+<head>
+	<title>Page not Safe</title>
+</head>
+<body>
+	<h1>Picture not Safe, reconsider uploading</h1>
+</body>
+</html> -->
+{% extends "base.html" %}
+{% block content %}
+<h1><center> Picture not safe. Please reconsider uploading. </center></h1>
+<center><img src="http://i0.kym-cdn.com/entries/icons/mobile/000/013/564/doge.jpg"></center>
+<form action="/" method="get">
+    <center><input type="submit" value="Back Home" 
+         name="Submit" id="frm1_submit" /></center>
+</form>
+{% endblock %}

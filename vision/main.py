@@ -1,16 +1,20 @@
 import base64
 import os
 
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, render_template, request, redirect, url_for
 from google.cloud import datastore
 from google.cloud import storage
 from google.cloud import vision
 
 
+
 app = Flask(__name__)
 
+@app.route("/")
+def notindex():
+	return render_template("index.html")
 
-@app.route('/')
+@app.route('/homepage')
 def homepage():
     # Create a Cloud Datastore client.
     datastore_client = datastore.Client()
@@ -25,14 +29,19 @@ def homepage():
 
 @app.route('/upload_photo', methods=['GET', 'POST'])
 def upload_photo():
+
     # Create a Cloud Storage client.
     storage_client = storage.Client()
+    print("here")
 
     # Get the Cloud Storage bucket that the file will be uploaded to.
+    print(os.environ.get('CLOUD_STORAGE_BUCKET'))
     bucket = storage_client.get_bucket(os.environ.get('CLOUD_STORAGE_BUCKET'))
 
     # Create a new blob and upload the file's content to Cloud Storage.
     photo = request.files['file']
+    print(request.files['file'])
+    print("here1")
     blob = bucket.blob(photo.filename)
     blob.upload_from_string(
             photo.read(), content_type=photo.content_type)
@@ -40,7 +49,8 @@ def upload_photo():
     # Make the blob publicly viewable.
     blob.make_public()
     image_public_url = blob.public_url
-    
+    url=blob.public_url
+    print("here2")
     # Create a Cloud Vision client.
     vision_client = vision.ImageAnnotatorClient()
 
@@ -52,6 +62,7 @@ def upload_photo():
     labels = response.label_annotations
     faces = response.face_annotations
     web_entities = response.web_detection.web_entities
+    safe = response.safe_search_annotation
 
     # Create a Cloud Datastore client
     datastore_client = datastore.Client()
@@ -73,9 +84,22 @@ def upload_photo():
 
     # Save the new entity to Datastore
     datastore_client.put(entity)
-
+    #fb(entity['image_public_url'])
     # Redirect to the home page.
-    return render_template('homepage.html', labels=labels, faces=faces, web_entities=web_entities, public_url=image_public_url)
+    #return render_template('homepage.html', labels=labels, faces=faces, web_entities=web_entities, public_url=image_public_url, safe=safe)
+
+    pic1  = {'url': image_public_url}
+    print(pic1)
+
+    return render_template('submit_photo.html', pic=pic1)
+    #return redirect("/fb")
+
+# @app.route("/fb")
+# def fb(url):
+# 	print(url)
+# 	pic  = {"url": url}
+# 	print(pic)
+# 	return render_template('submit_photo.html', pic=pic)
 
 
 @app.errorhandler(500)

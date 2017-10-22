@@ -1,19 +1,25 @@
-<h1>Google Cloud Platform - Vision Sample</h1>
+{% extends "base.html" %}
+{% block content %}
+<h1><center>Think Twice</center></h1>
 
-<p>This Python Flask application demonstrates App Engine Flexible, Cloud Storage, Vision API, and Datastore.</p>
+<center><img src="https://scontent.fzty2-1.fna.fbcdn.net/v/t34.0-12/22773443_1993622090861517_157651621_n.png?oh=d72c7d59c4b65689e1c55a51d149a7c6&oe=59EEA013"></center>
+
+
+<p><center>Hello! We are an online platform that helps you determine whether or not to upload certain pictures to Facebook. Using the Google Machine Learning API, we primarily look for images that are not safe for work (NSFW), so that you don't make a decision that you'll regret later. If a picture is not safe, we will prevent you from uploading it altogether, but if it is safe, we will go ahead and upload it for you!</center></p>
 
 <br>
 
 <html>
-  <body>
+  <body><center>
     <form action="upload_photo" method="POST" enctype="multipart/form-data">
-      Upload File: <input type="file" name="file"><br>
-      <input type="submit" name="submit" value="Submit">
+      Upload File: <br><input type="file" name="file"><br><br>
+      <input type="submit" name="submit" value="Submit"></center>
     </form>
-    {% for image_entity in image_entities %}
+
+<!--     {% for image_entity in image_entities %}
       <img src="{{image_entity['image_public_url']}}" width=200 height=200>
       <p>Top Label Detected using Vision API: {{image_entity['label']}}</p>
-    {% endfor %}
+    {% endfor %} -->
 
     {% if public_url %}
       <img src="{{public_url}}" width=200 height=200>
@@ -22,6 +28,9 @@
         <p><b>Label:</b> {{label.description}} <b>Score:</b> {{label.score}}</p>
       {% endfor %}
       <br>
+
+      <script>//window.location.replace("/fb",url=public_url) </script>
+
 
       <h2>Face Detection:</h2>
       {% for face in faces %}
@@ -43,6 +52,13 @@
       {% for web_entity in web_entities %}
         <p><b>Web Entity:</b> {{web_entity.description}} <b>Score:</b> {{web_entity.score}}</p>
       {% endfor %}
+      <h2>Safe Search</h2>
+      <p>adult : {{safe.adult}}</p>
+      <p>medical: {{safe.medical}}</p>
+      <p>spoofed: {{safe.spoof}}</p>
+      <p>violence: {{safe.violence}}</p>
     {% endif %}
   </body>
+
 </html> 
+{% endblock %}
